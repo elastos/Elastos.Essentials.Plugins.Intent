@@ -1,0 +1,36 @@
+{
+  "name": "appmanager",
+  "version": "1.0.0",
+  "description": "Elastos Essentials AppManager Plugin",
+  "cordova": {
+    "id": "elastos-essentials-plugins-appmanager",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/elastos/Elastos.Essentials.Plugins.AppManager.git"
+  },
+  "keywords": [
+    "cordova",
+    "appmanager",
+    "trinity",
+    "essentials",
+    "elastos",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios",
+    "cordova-browser"
+  ],
+  "author": "Dongxiao Chen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/elastos/Elastos.Essentials.Plugins.AppManager/issues"
+  },
+  "homepage": "https://github.com/elastos/Elastos.Essentials.Plugins.AppManager#readme",
+  "scripts": {
+    "gen-docs": "jsdoc2md www/appmanager.js > README.md"
+  }
+}
