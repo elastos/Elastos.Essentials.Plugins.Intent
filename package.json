@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Elastos Essentials AppManager Plugin",
   "cordova": {
-    "id": "elastos-essentials-plugins-appmanager",
+    "id": "elastos-cordova-plugin-appmanager",
     "platforms": [
       "android",
       "ios"

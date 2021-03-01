@@ -22,18 +22,38 @@
 
 package org.elastos.essentials.plugins.appmanager;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.util.Base64;
+import android.util.Log;
+
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 
 public class AppManagerPlugin extends CordovaPlugin {
-    protected CallbackContext mMessageContext = null;
-    protected CallbackContext mIntentContext = null;
-
-    private boolean isChangeIconPath = false;
-
+    private static final String LOG_TAG = "AppManager";
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -48,15 +68,11 @@ public class AppManagerPlugin extends CordovaPlugin {
                 case "sendIntentResponse":
                     this.sendIntentResponse(args, callbackContext);
                     break;
-                case "hasPendingIntent":
-                    this.hasPendingIntent(callbackContext);
-                    break;
 
                 default:
                     return false;
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             callbackContext.error(e.getLocalizedMessage());
         }
@@ -66,78 +82,30 @@ public class AppManagerPlugin extends CordovaPlugin {
     protected void sendIntent(JSONArray args, CallbackContext callbackContext) throws Exception {
         String action = args.getString(0);
         String params = args.getString(1);
+
+        IntentInfo info = new IntentInfo(action, params, (success, data)->{
+            PluginResult result = new PluginResult(PluginResult.Status.OK, data);
+            result.setKeepCallback(false);
+            callbackContext.sendPluginResult(result);
+        });
+        IntentManager.getShareInstance().sendIntent(info);
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
         callbackContext.sendPluginResult(pluginResult);
     }
 
     protected void sendIntentResponse(JSONArray args, CallbackContext callbackContext) throws Exception {
-        String result = args.getString(1);
-        long intentId = args.getLong(2);
+        String result = args.getString(0);
+        long intentId = args.getLong(1);
 
-//        IntentManager.getShareInstance().sendIntentResponse(result, intentId);
+        IntentManager.getShareInstance().sendIntentResponse(result, intentId);
         callbackContext.success("ok");
     }
 
     protected void setIntentListener(CallbackContext callbackContext) throws Exception {
-        mIntentContext = callbackContext;
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
         callbackContext.sendPluginResult(pluginResult);
-//        IntentManager.getShareInstance().setIntentReady(getModeId());
+        IntentManager.getShareInstance().setListenerReady(callbackContext);
     }
-
-    protected void hasPendingIntent(CallbackContext callbackContext) throws Exception {
-//        Boolean ret = IntentManager.getShareInstance().getIntentCount(getModeId()) != 0;
-//        callbackContext.success(ret.toString());
-    }
-
-    public Boolean isIntentReady() {
-        return (mIntentContext != null);
-    }
-
-//    public void onReceiveIntent(IntentInfo info) {
-//        if (mIntentContext == null)
-//            return;
-//
-//        JSONObject ret = new JSONObject();
-//        try {
-//            if (info.registeredAction != null) {
-//                ret.put("action", info.registeredAction);
-//            }
-//            else {
-//                ret.put("action", info.action);
-//            }
-//            ret.put("params", info.params);
-//            ret.put("from", info.fromId);
-//            ret.put("intentId", info.intentId);
-//            ret.put("originalJwtRequest", info.originalJwtRequest);
-//            PluginResult result = new PluginResult(PluginResult.Status.OK, ret);
-//            result.setKeepCallback(true);
-//            mIntentContext.sendPluginResult(result);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void onReceiveIntentResponse(IntentInfo info) {
-//        JSONObject obj = new JSONObject();
-//        try {
-//            obj.put("action", info.action);
-//            if (info.params != null) {
-//                obj.put("result", info.params);
-//            }
-//            else {
-//                obj.put("result", "null");
-//            }
-//            obj.put("from", info.toId);
-//            if (info.responseJwt != null)
-//                obj.put("responseJWT", info.responseJwt);
-//
-//            info.onIntentResponseCallback.onIntentResponse(true, obj);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 }

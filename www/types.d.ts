@@ -75,23 +75,11 @@ declare namespace AppManagerPlugin {
          * Send a intent response by id.
          *
          * @deprecated @param action The intent action. Not used any more. Pass null.
-         * @param result     The intent response result.
          * @param intentId   The intent id.
          * @param onSuccess  The function to call when success.
          * @param onError    The function to call when error, the param is a String. Or set to null.
          */
-        sendIntentResponse(action: string, result: any, intentId: Number): Promise<any>;
+        sendIntentResponse(result: any, intentId: Number): Promise<any>;
 
-        /**
-         *
-         * Check is there is a pending intent for the current application. A pending intent is an action
-         * requested by a third party application, launching the current application to execute a specific
-         * action. In such case, when hasPendingIntent() is true, we want to directly show the appropriate
-         * application screen instead of going through the home screen.
-         *
-         * @param onSuccess  Callback that returns if there is a pending intent or not.
-         * @param onError    Function called in case of error.
-         */
-        hasPendingIntent(onSuccess: (hasPendingIntent: boolean) => void, onError?: (err: any) => void);
     }
 }

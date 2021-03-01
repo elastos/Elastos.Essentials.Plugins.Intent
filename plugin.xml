@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="elastos-essentials-plugins-appmanager" version="1.0.0"
+<plugin id="elastos-cordova-plugin-appmanager" version="1.0.0"
     xmlns="http://apache.org/cordova/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <name>AppManager</name>
@@ -13,7 +13,20 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-         <source-file src="src/android/AppManagerPlugin.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
+        <edit-config file="AndroidManifest.xml" target="/manifest/application/activity" mode="overwrite">
+             <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode" android:label="@string/activity_name" android:launchMode="singleTop" android:name="org.elastos.essentials.plugins.appmanager.MainActivity" android:theme="@android:style/Theme.DeviceDefault.NoActionBar" android:windowSoftInputMode="adjustResize">
+            </activity>
+        </edit-config>
+
+        <config-file target="AndroidManifest.xml" parent="/manifest/application">
+            <uses-library android:name="org.apache.http.legacy" android:required="false" />
+        </config-file>
+
+        <source-file src="src/android/AppManagerPlugin.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
+        <source-file src="src/android/IntentInfo.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
+        <source-file src="src/android/IntentManager.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
+        <source-file src="src/android/MainActivity.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
+        <framework src="src/android/intent.gradle" custom="true" type="gradleReference"/>
     </platform>
     <!-- <platform name="ios">
         <config-file parent="/*" target="config.xml">

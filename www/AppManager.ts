@@ -53,7 +53,7 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
         exec(_onReceiveIntent, null, 'AppManager', 'setIntentListener');
     }
 
-    sendIntentResponse(action: string, result: any, intentId: Number): Promise<any> {
+    sendIntentResponse(result: any, intentId: Number): Promise<any> {
         return new Promise((resolve, reject)=>{
             exec((ret)=>{
                 if (typeof (ret.result) == "string") {
@@ -64,25 +64,8 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
             (err)=>{
               reject(err);
             },
-            'AppManager', 'sendIntentResponse', [action, JSON.stringify(result), intentId]);
+            'AppManager', 'sendIntentResponse', [JSON.stringify(result), intentId]);
         });
-    }
-
-    hasPendingIntent(onSuccess: (hasPendingIntent: boolean) => void, onError?: (err: any) => void) {
-        function _onSuccess(ret: any) {
-            if (typeof (ret) == "string") {
-                if (ret == "true") {
-                    ret = true;
-                }
-                else {
-                    ret = false;
-                }
-            }
-            if (onSuccess) {
-                onSuccess(ret);
-            }
-        }
-        exec(_onSuccess, onError, 'AppManager', 'hasPendingIntent', []);
     }
 }
 
