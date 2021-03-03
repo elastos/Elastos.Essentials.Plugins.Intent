@@ -18,10 +18,6 @@
             </activity>
         </edit-config>
 
-        <config-file target="app/src/main/AndroidManifest.xml" parent="/manifest/application">
-            <uses-library android:name="org.apache.http.legacy" android:required="false" />
-        </config-file>
-
         <source-file src="src/android/AppManagerPlugin.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
         <source-file src="src/android/IntentInfo.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
         <source-file src="src/android/IntentManager.java" target-dir="src/org/elastos/essentials/plugins/appmanager" />
