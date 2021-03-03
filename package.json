@@ -1,5 +1,5 @@
 {
-  "name": "appmanager",
+  "name": "elastos-cordova-plugin-appmanager",
   "version": "1.0.0",
   "description": "Elastos Essentials AppManager Plugin",
   "cordova": {
@@ -32,5 +32,6 @@
   "homepage": "https://github.com/elastos/Elastos.Essentials.Plugins.AppManager#readme",
   "scripts": {
     "gen-docs": "jsdoc2md www/appmanager.js > README.md"
-  }
+  },
+  "types": "./www/types.d.ts"
 }
