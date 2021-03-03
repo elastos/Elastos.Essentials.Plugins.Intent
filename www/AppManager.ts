@@ -37,7 +37,7 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
             (err)=>{
               reject(err);
             },
-            'AppManager', 'AppManager', [action, JSON.stringify(params)]);
+            'AppManager', 'sendIntent', [action, JSON.stringify(params)]);
           });
     }
 
@@ -53,13 +53,10 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
         exec(_onReceiveIntent, null, 'AppManager', 'setIntentListener');
     }
 
-    sendIntentResponse(result: any, intentId: Number): Promise<any> {
+    sendIntentResponse(result: any, intentId: Number): Promise<void> {
         return new Promise((resolve, reject)=>{
-            exec((ret)=>{
-                if (typeof (ret.result) == "string") {
-                    ret.result = JSON.parse(ret.result);
-                }
-                resolve(ret);
+            exec(()=>{
+                resolve();
             },
             (err)=>{
               reject(err);

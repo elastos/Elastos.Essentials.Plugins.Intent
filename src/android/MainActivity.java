@@ -23,8 +23,12 @@
 package org.elastos.essentials.plugins.appmanager;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.webkit.WebView;
+
 import org.apache.cordova.*;
 
 public class MainActivity extends CordovaActivity
@@ -58,11 +62,11 @@ public class MainActivity extends CordovaActivity
             moveTaskToBack(true);
         }
 
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-        //     if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-        //         WebView.setWebContentsDebuggingEnabled(true);
-        //     }
-        // }
+         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+             if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+                 WebView.setWebContentsDebuggingEnabled(true);
+             }
+         }
 
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);

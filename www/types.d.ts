@@ -79,7 +79,7 @@ declare namespace AppManagerPlugin {
          * @param onSuccess  The function to call when success.
          * @param onError    The function to call when error, the param is a String. Or set to null.
          */
-        sendIntentResponse(result: any, intentId: Number): Promise<any>;
+        sendIntentResponse(result: any, intentId: Number): Promise<void>;
 
     }
 }

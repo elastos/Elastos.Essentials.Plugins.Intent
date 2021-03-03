@@ -68,10 +68,12 @@ public class IntentManager {
     private boolean listenerReady = false;
     protected CallbackContext mIntentContext = null;
     private String[] internalIntentFilters;
+    private String intentRedirectFilter;
 
     IntentManager() {
         String filters = MainActivity.instance.getPreferences().getString("InternalIntentFilter", "");
         internalIntentFilters = filters.split(" ");
+        intentRedirectFilter = MainActivity.instance.getPreferences().getString("IntentRedirectFilter", "https://essentials.elastos.net");
     }
 
     public static IntentManager getShareInstance() {
@@ -96,7 +98,6 @@ public class IntentManager {
         if ((str.startsWith("{") && str.endsWith("}"))
                 || (str.startsWith("[") && str.endsWith("]"))) {
             return true;
-
         }
         return false;
     }
@@ -124,8 +125,6 @@ public class IntentManager {
         });
         ab.show();
     }
-
-
 
     private  void doIntent(Uri uri) {
         if (!uri.toString().contains("redirecturl") && uri.toString().contains("/intentresponse"))
@@ -160,6 +159,7 @@ public class IntentManager {
         if (mIntentContext == null)
             return;
 
+        addToIntentContextList(info);
         JSONObject ret = new JSONObject();
         try {
             ret.put("action", info.action);
@@ -492,8 +492,7 @@ public class IntentManager {
             // "intentresponse" is added For trinity native. NOTE: we should maybe move this out of this method
             url = addParamLinkChar(url);
 
-            String customAppScheme = "https://essentials.elastos.org";
-            url += "redirecturl="+customAppScheme+"/intentresponse%3FintentId=" + info.intentId; // Ex: diddemo:///intentresponse?intentId=xxx
+            url += "redirecturl=" + intentRedirectFilter + "/intentresponse%3FintentId=" + info.intentId; // Ex: diddemo:///intentresponse?intentId=xxx
         }
 
         System.out.println("INTENT DEBUG: " + url);
@@ -624,7 +623,7 @@ public class IntentManager {
         }
     }
 
-    public void sendIntentResponse(String result, long intentId) throws Exception {
+    public void sendIntentResponse(String result, long intentId, boolean isReceiveExternal) throws Exception {
         // Retrieve intent context information for the given intent id
         IntentInfo info = intentContextList.get(intentId);
         if (info == null) {
@@ -635,7 +634,7 @@ public class IntentManager {
         // The result object can be either a standard json object, or a {jwt:JWT} object.
         IntentResult intentResult = new IntentResult(result);
 
-        if (isInternalIntent(info.action)) {
+        if (isReceiveExternal || isInternalIntent(info.action)) {
             info.params = intentResult.payloadAsString();
             // If the called dapp has generated a JWT as output, we pass the decoded payload to the calling dapp
             // for convenience, but we also forward the raw JWT as this is required in some cases.
@@ -698,7 +697,7 @@ public class IntentManager {
         }
 
         try {
-            sendIntentResponse(resultStr, intentId);
+            sendIntentResponse(resultStr, intentId, true);
         } catch (Exception e) {
             e.printStackTrace();
         }

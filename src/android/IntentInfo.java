@@ -39,7 +39,6 @@ public class IntentInfo {
     String action; // Full action as given by the dapp, including domain and action
     String params;
     long intentId;
-    //CallbackContext callbackContext;
     OnIntentResponse onIntentResponseCallback;
 
 
@@ -57,6 +56,5 @@ public class IntentInfo {
         this.params = params;
         this.intentId = System.currentTimeMillis(); //Need check the same time action?
         this.onIntentResponseCallback = onIntentResponseCallback;
-        //this.callbackContext = callbackContext;
     }
 }
