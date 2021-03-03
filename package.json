@@ -1,9 +1,9 @@
 {
-  "name": "elastos-cordova-plugin-appmanager",
+  "name": "elastos-essentials-plugin-appmanager",
   "version": "1.0.0",
   "description": "Elastos Essentials AppManager Plugin",
   "cordova": {
-    "id": "elastos-cordova-plugin-appmanager",
+    "id": "elastos-essentials-plugin-appmanager",
     "platforms": [
       "android",
       "ios"
@@ -16,7 +16,6 @@
   "keywords": [
     "cordova",
     "appmanager",
-    "trinity",
     "essentials",
     "elastos",
     "ecosystem:cordova",
