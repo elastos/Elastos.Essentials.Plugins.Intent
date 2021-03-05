@@ -21,10 +21,8 @@
 */
 
 /**
-* This is about AppManager which makes it possible to send intents, messages, etc. between DApps.
-* <br><br>
-* There is no need to use 'AppManagerPlugin' as the plugin name in the manifest.json if you want to use
-* this facility, because it's available by default.
+* This is an internal plugin for Elastos Essentials in order to manage internal and external
+* inter-app communications through "intents".
 * <br><br>
 * Usage:
 * <br>
@@ -32,7 +30,6 @@
 */
 
 declare namespace AppManagerPlugin {
-
     /**
      * Information about an intent request.
      */
@@ -58,39 +55,29 @@ declare namespace AppManagerPlugin {
          *
          * @param action     The intent action.
          * @param params     The intent params.
-         * @param options    Optional options passed to sendIntent().
-         * @param onSuccess  The function to call when success.
-         * @param onError    The function to call when error, the param is a String. Or set to null.
          */
-        sendIntent(action: string, params: any): Promise<any>;
+        sendIntent(action: string, params?: any): Promise<any>;
 
         /**
          * Send a intent by url.
          *
          * @param url        The intent url.
-         * @param onSuccess  The function to call when success.
-         * @param onError    The function to call when error, the param is a String. Or set to null.
          */
         sendUrlIntent(url: string): Promise<void>;
 
         /**
-         * @deprecated Replaced by getStartIntent() but this keeps receiving the start intent for some time for compatibility.
+         * Set intent listener for intent callback.
          *
-         * Set intent listener for message callback.
-         *
-         * @param callback   The function receive the intent.
+         * @param callback   The function to receive the intent.
          */
         setIntentListener(callback: (msg: ReceivedIntent)=>void);
 
         /**
          * Send a intent response by id.
          *
-         * @deprecated @param action The intent action. Not used any more. Pass null.
+         * @param result     the intent result data to be sent to the caller of sendIntent().
          * @param intentId   The intent id.
-         * @param onSuccess  The function to call when success.
-         * @param onError    The function to call when error, the param is a String. Or set to null.
          */
         sendIntentResponse(result: any, intentId: Number): Promise<void>;
-
     }
 }
