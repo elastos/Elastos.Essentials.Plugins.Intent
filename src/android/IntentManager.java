@@ -28,6 +28,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 
@@ -704,7 +705,13 @@ public class IntentManager {
     }
 
     void sendIntent(IntentInfo info) throws Exception {
-        if (isInternalIntent(info.action)) {
+        if (info.action.equals("share")) {
+            sendNativeShareAction(info);
+        }
+        else if (info.action.equals("openurl")) {
+            sendNativeOpenUrlAction(info);
+        }
+        else if (isInternalIntent(info.action)) {
             onReceiveIntent(info);
         }
         else {
@@ -721,5 +728,109 @@ public class IntentManager {
         String url = createUriParamsFromIntentInfoParams(info);
 
         showWebPage(url);
+    }
+
+    public class ShareIntentParams {
+        String title = null;
+        Uri url = null;
+    }
+
+    private ShareIntentParams extractShareIntentParams(IntentInfo info) {
+        // Extract JSON params from the share intent. Expected format is {title:"", url:""} but this
+        // could be anything as this is set by users.
+        if (info.params == null) {
+            System.out.println("Share intent params are not set!");
+            return null;
+        }
+
+        JSONObject jsonParams = null;
+        try {
+            jsonParams = new JSONObject(info.params);
+        } catch (JSONException e) {
+            System.out.println("Share intent parameters are not JSON format");
+            return null;
+        }
+
+        ShareIntentParams shareIntentParams = new ShareIntentParams();
+
+        shareIntentParams.title  = jsonParams.optString("title");
+
+        String url = jsonParams.optString("url");
+        if (url != null) {
+            shareIntentParams.url = Uri.parse(url);
+        }
+
+        return shareIntentParams;
+    }
+
+    void sendNativeShareAction(IntentInfo info) {
+        ShareIntentParams extractedParams = extractShareIntentParams(info);
+        if (extractedParams != null)  {
+            // Can't send an empty share action
+            if (extractedParams.title == null && extractedParams.url == null)
+                return;
+
+            android.content.Intent sendIntent = new android.content.Intent();
+            sendIntent.setAction(android.content.Intent.ACTION_SEND);
+
+            ArrayList<String> extraTextParams = new ArrayList();
+            if (extractedParams.title != null)
+                extraTextParams.add(extractedParams.title);
+
+            if (extractedParams.url != null)
+                extraTextParams.add(extractedParams.url.toString());
+
+            sendIntent.putExtra(android.content.Intent.EXTRA_TEXT,  TextUtils.join(" ", extraTextParams));
+
+            sendIntent.setType("text/plain");
+
+            android.content.Intent shareIntent = android.content.Intent.createChooser(sendIntent, null);
+            MainActivity.instance.startActivity(shareIntent);
+        }
+    }
+
+    public class OpenUrlIntentParams {
+        Uri url = null;
+    }
+
+    private OpenUrlIntentParams extractOpenUrlIntentParams(IntentInfo info) {
+        // Extract JSON params from the open url intent. Expected format is {url:""}.
+        if (info.params == null) {
+            System.out.println("Openurl intent params are not set!");
+            return null;
+        }
+
+        JSONObject jsonParams = null;
+        try {
+            jsonParams = new JSONObject(info.params);
+        } catch (JSONException e) {
+            System.out.println("Openurl intent parameters are not JSON format");
+            return null;
+        }
+
+        OpenUrlIntentParams openUrlIntentParams = new OpenUrlIntentParams();
+
+        String url = jsonParams.optString("url");
+        if (url != null) {
+            openUrlIntentParams.url = Uri.parse(url);
+        }
+
+        return openUrlIntentParams;
+    }
+
+    void sendNativeOpenUrlAction(IntentInfo info) {
+        OpenUrlIntentParams extractedParams = extractOpenUrlIntentParams(info);
+        if (extractedParams != null)  {
+            // Can't send an empty open url action
+            if (extractedParams.url == null)
+                return;
+
+            android.content.Intent sendIntent = new android.content.Intent();
+            sendIntent.setAction(Intent.ACTION_VIEW);
+            sendIntent.setData(extractedParams.url);
+
+            android.content.Intent shareIntent = android.content.Intent.createChooser(sendIntent, null);
+            MainActivity.instance.startActivity(shareIntent);
+        }
     }
 }
