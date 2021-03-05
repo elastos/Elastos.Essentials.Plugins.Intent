@@ -45,7 +45,7 @@ declare namespace AppManagerPlugin {
         /** Custom intent parameters provided by the calling application. */
         params: any;
         /** Application package id of the calling application. */
-        intentId: Number;
+        intentId: number;
         /** In case the intent comes from outside elastOS and was received as a JWT, this JWT is provided here. */
         originalJwtRequest?: string;
         /** From 'internal' or 'external'. */
