@@ -167,6 +167,12 @@ public class IntentManager {
             ret.put("params", info.params);
             ret.put("intentId", info.intentId);
             ret.put("originalJwtRequest", info.originalJwtRequest);
+            if (isInternalIntent(info.action)) {
+                ret.put("from", "internal");
+            }
+            else {
+                ret.put("from", "external");
+            }
             PluginResult result = new PluginResult(PluginResult.Status.OK, ret);
             result.setKeepCallback(true);
             mIntentContext.sendPluginResult(result);
