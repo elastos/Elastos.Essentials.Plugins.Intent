@@ -45,6 +45,8 @@ declare namespace AppManagerPlugin {
         intentId: Number;
         /** In case the intent comes from outside elastOS and was received as a JWT, this JWT is provided here. */
         originalJwtRequest?: string;
+        /** From 'internal' or 'external'. */
+        from: string;
     }
 
     /**
