@@ -65,7 +65,7 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
         exec(_onReceiveIntent, null, 'AppManager', 'setIntentListener');
     }
 
-    sendIntentResponse(result: any, intentId: Number): Promise<void> {
+    sendIntentResponse(result: any, intentId: number): Promise<void> {
         return new Promise((resolve, reject)=>{
             exec(()=>{
                 resolve();

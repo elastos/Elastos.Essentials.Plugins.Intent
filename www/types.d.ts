@@ -84,6 +84,6 @@ declare namespace AppManagerPlugin {
          * @param result     the intent result data to be sent to the caller of sendIntent().
          * @param intentId   The intent id.
          */
-        sendIntentResponse(result: any, intentId: Number): Promise<void>;
+        sendIntentResponse(result: any, intentId: number): Promise<void>;
     }
 }
