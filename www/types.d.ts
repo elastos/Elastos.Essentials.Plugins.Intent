@@ -63,6 +63,15 @@ declare namespace AppManagerPlugin {
         sendIntent(action: string, params: any): Promise<any>;
 
         /**
+         * Send a intent by url.
+         *
+         * @param url        The intent url.
+         * @param onSuccess  The function to call when success.
+         * @param onError    The function to call when error, the param is a String. Or set to null.
+         */
+        sendUrlIntent(url: string): Promise<void>;
+
+        /**
          * @deprecated Replaced by getStartIntent() but this keeps receiving the start intent for some time for compatibility.
          *
          * Set intent listener for message callback.

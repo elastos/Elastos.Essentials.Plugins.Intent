@@ -41,6 +41,18 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
           });
     }
 
+    sendUrlIntent(url: string): Promise<void> {
+        return new Promise((resolve, reject)=>{
+            exec(()=>{
+                resolve();
+            },
+            (err)=>{
+                reject(err);
+            },
+            'AppManager', 'sendUrlIntent', [url]);
+        });
+    }
+
     setIntentListener(callback: (msg: AppManagerPlugin.ReceivedIntent) => void) {
         function _onReceiveIntent(ret) {
             if (typeof (ret.params) == "string") {
@@ -59,7 +71,7 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
                 resolve();
             },
             (err)=>{
-              reject(err);
+                reject(err);
             },
             'AppManager', 'sendIntentResponse', [JSON.stringify(result), intentId]);
         });

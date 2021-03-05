@@ -22,35 +22,13 @@
 
 package org.elastos.essentials.plugins.appmanager;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.net.Uri;
-import android.util.Base64;
-import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
 import org.apache.cordova.PluginResult;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 
 public class AppManagerPlugin extends CordovaPlugin {
     private static final String LOG_TAG = "AppManager";
@@ -61,6 +39,9 @@ public class AppManagerPlugin extends CordovaPlugin {
             switch (action) {
                 case "sendIntent":
                     this.sendIntent(args, callbackContext);
+                    break;
+                case "sendUrlIntent":
+                    this.sendUrlIntent(args, callbackContext);
                     break;
                 case "setIntentListener":
                     this.setIntentListener(callbackContext);
@@ -92,6 +73,18 @@ public class AppManagerPlugin extends CordovaPlugin {
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
         callbackContext.sendPluginResult(pluginResult);
+    }
+
+    protected void sendUrlIntent(JSONArray args, CallbackContext callbackContext) throws Exception {
+        String url = args.getString(0);
+
+        if (IntentManager.getShareInstance().isInternalIntent(url)) {
+            IntentManager.getShareInstance().receiveIntent(Uri.parse(url));
+        }
+        else {
+            IntentManager.getShareInstance().showWebPage(url);
+        }
+        callbackContext.success();
     }
 
     protected void sendIntentResponse(JSONArray args, CallbackContext callbackContext) throws Exception {
