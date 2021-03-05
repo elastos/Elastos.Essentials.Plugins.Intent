@@ -30,6 +30,12 @@
 */
 
 declare namespace AppManagerPlugin {
+
+    const enum IntentSource {
+        Internal = "INTERNAL",
+        External = "EXTERNAL"
+    }
+
     /**
      * Information about an intent request.
      */
@@ -43,7 +49,7 @@ declare namespace AppManagerPlugin {
         /** In case the intent comes from outside elastOS and was received as a JWT, this JWT is provided here. */
         originalJwtRequest?: string;
         /** From 'internal' or 'external'. */
-        from: string;
+        from: IntentSource;
     }
 
     /**

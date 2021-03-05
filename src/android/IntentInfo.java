@@ -33,6 +33,9 @@ public class IntentInfo {
     public static final int JWT = 1;
     public static final int URL = 2;
 
+    public static final String INTERNAL = "INTERNAL";
+    public static final String EXTERNAL = "EXTERNAL";
+
     public static final String REDIRECT_URL = "redirecturl";
     public static final String CALLBACK_URL = "callbackurl";
 

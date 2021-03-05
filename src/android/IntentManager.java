@@ -40,6 +40,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.elastos.essentials.plugins.appmanager.IntentInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -168,10 +169,10 @@ public class IntentManager {
             ret.put("intentId", info.intentId);
             ret.put("originalJwtRequest", info.originalJwtRequest);
             if (isInternalIntent(info.action)) {
-                ret.put("from", "internal");
+                ret.put("from", IntentInfo.INTERNAL);
             }
             else {
-                ret.put("from", "external");
+                ret.put("from", IntentInfo.EXTERNAL);
             }
             PluginResult result = new PluginResult(PluginResult.Status.OK, ret);
             result.setKeepCallback(true);
