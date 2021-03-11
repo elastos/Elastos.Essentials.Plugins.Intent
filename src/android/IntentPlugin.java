@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package org.elastos.essentials.plugins.appmanager;
+package org.elastos.essentials.plugins.intent;
 
 import android.net.Uri;
 
@@ -30,8 +30,8 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 
-public class AppManagerPlugin extends CordovaPlugin {
-    private static final String LOG_TAG = "AppManager";
+public class IntentPlugin extends CordovaPlugin {
+    private static final String LOG_TAG = "Intent";
 
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) throws JSONException {
@@ -43,8 +43,8 @@ public class AppManagerPlugin extends CordovaPlugin {
                 case "sendUrlIntent":
                     this.sendUrlIntent(args, callbackContext);
                     break;
-                case "setIntentListener":
-                    this.setIntentListener(callbackContext);
+                case "addIntentListener":
+                    this.addIntentListener(callbackContext);
                     break;
                 case "sendIntentResponse":
                     this.sendIntentResponse(args, callbackContext);
@@ -64,11 +64,7 @@ public class AppManagerPlugin extends CordovaPlugin {
         String action = args.getString(0);
         String params = args.getString(1);
 
-        IntentInfo info = new IntentInfo(action, params, (success, data)->{
-            PluginResult result = new PluginResult(PluginResult.Status.OK, data);
-            result.setKeepCallback(false);
-            callbackContext.sendPluginResult(result);
-        });
+        IntentInfo info = new IntentInfo(action, params, callbackContext);
         IntentManager.getShareInstance().sendIntent(info);
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
@@ -79,7 +75,7 @@ public class AppManagerPlugin extends CordovaPlugin {
         String url = args.getString(0);
 
         if (IntentManager.getShareInstance().isInternalIntent(url)) {
-            IntentManager.getShareInstance().receiveIntent(Uri.parse(url));
+            IntentManager.getShareInstance().receiveIntent(Uri.parse(url), callbackContext);
         }
         else {
             IntentManager.getShareInstance().showWebPage(url);
@@ -95,7 +91,7 @@ public class AppManagerPlugin extends CordovaPlugin {
         callbackContext.success();
     }
 
-    protected void setIntentListener(CallbackContext callbackContext) throws Exception {
+    protected void addIntentListener(CallbackContext callbackContext) throws Exception {
         PluginResult pluginResult = new PluginResult(PluginResult.Status.NO_RESULT);
         pluginResult.setKeepCallback(true);
         callbackContext.sendPluginResult(pluginResult);

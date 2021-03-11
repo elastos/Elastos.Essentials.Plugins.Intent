@@ -1,35 +1,35 @@
 ## Classes
 
 <dl>
-<dt><a href="#AppManager">AppManager</a></dt>
+<dt><a href="#Intent">Intent</a></dt>
 <dd></dd>
 </dl>
 
 ## Typedefs
 
-<a name="AppManager"></a>
+<a name="Intent"></a>
 
-## AppManager
+## Intent
 **Kind**: global class
 
-* [AppManager](#AppManager)
-    * [new AppManager()](#new_AppManager_new)
-    * [.sendIntent(action, params, onSuccess, [onError])](#AppManager+sendIntent)
-    * [.setIntentListener(callback)](#AppManager+setIntentListener)
-    * [.sendIntentResponse(action, result, intentId, onSuccess, [onError])](#AppManager+sendIntentResponse)
+* [Intent](#Intent)
+    * [new Intent()](#new_Intent_new)
+    * [.sendIntent(action, params, onSuccess, [onError])](#Intent+sendIntent)
+    * [.addIntentListener(callback)](#Intent+addIntentListener)
+    * [.sendIntentResponse(action, result, intentId, onSuccess, [onError])](#Intent+sendIntentResponse)
 
-<a name="new_AppManager_new"></a>
+<a name="new_Intent_new"></a>
 
-### new AppManager()
+### new Intent()
 The class representing dapp manager for launcher.
 
 
-<a name="AppManager+sendIntent"></a>
+<a name="Intent+sendIntent"></a>
 
 ### appManager.sendIntent(action, params, onSuccess, [onError])
 Send a intent by action.
 
-**Kind**: instance method of [<code>AppManager</code>](#AppManager)
+**Kind**: instance method of [<code>Intent</code>](#Intent)
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -38,23 +38,23 @@ Send a intent by action.
 | onSuccess | <code>function</code> | The function to call when success. |
 | [onError] | <code>function</code> | The function to call when error, the param is a String. Or set to null. |
 
-<a name="AppManager+setIntentListener"></a>
+<a name="Intent+addIntentListener"></a>
 
-### appManager.setIntentListener(callback)
+### appManager.addIntentListener(callback)
 Set intent listener for message callback.
 
-**Kind**: instance method of [<code>AppManager</code>](#AppManager)
+**Kind**: instance method of [<code>Intent</code>](#Intent)
 
 | Param | Type | Description |
 | --- | --- | --- |
 | callback | [<code>onReceiveIntent</code>](#onReceiveIntent) | The function receive the intent. |
 
-<a name="AppManager+sendIntentResponse"></a>
+<a name="Intent+sendIntentResponse"></a>
 
 ### appManager.sendIntentResponse(action, result, intentId, onSuccess, [onError])
 Send a intent respone by id.
 
-**Kind**: instance method of [<code>AppManager</code>](#AppManager)
+**Kind**: instance method of [<code>Intent</code>](#Intent)
 
 | Param | Type | Description |
 | --- | --- | --- |

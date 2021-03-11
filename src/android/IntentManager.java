@@ -20,7 +20,7 @@
  * SOFTWARE.
  */
 
-package org.elastos.essentials.plugins.appmanager;
+package org.elastos.essentials.plugins.intent;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -40,7 +40,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.elastos.essentials.plugins.appmanager.IntentInfo;
+import org.elastos.essentials.plugins.intent.IntentInfo;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -183,18 +183,24 @@ public class IntentManager {
     }
 
     public void onReceiveIntentResponse(IntentInfo info) {
-        JSONObject obj = new JSONObject();
+        if (info.callbackContext == null) {
+            return;
+        }
+
+        JSONObject ret = new JSONObject();
         try {
-            obj.put("action", info.action);
+            ret.put("action", info.action);
             if (info.params != null) {
-                obj.put("result", info.params);
+                ret.put("result", info.params);
             } else {
-                obj.put("result", "null");
+                ret.put("result", "null");
             }
             if (info.responseJwt != null)
-                obj.put("responseJWT", info.responseJwt);
+                ret.put("responseJWT", info.responseJwt);
 
-            info.onIntentResponseCallback.onIntentResponse(true, obj);
+            PluginResult result = new PluginResult(PluginResult.Status.OK, ret);
+            result.setKeepCallback(false);
+            info.callbackContext.sendPluginResult(result);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -281,7 +287,7 @@ public class IntentManager {
         info.params = json.toString();
     }
 
-    public IntentInfo parseIntentUri(Uri uri) throws Exception {
+    public IntentInfo parseIntentUri(Uri uri, CallbackContext callbackContext) throws Exception {
         IntentInfo info = null;
         String url = uri.toString();
 
@@ -308,6 +314,7 @@ public class IntentManager {
             Set<String> set = uri.getQueryParameterNames();
 
             info = new IntentInfo(action, null, null);
+            info.callbackContext = callbackContext;
 
             if (set.size() > 0) {
                 getParamsByUri(uri, info);
@@ -319,8 +326,8 @@ public class IntentManager {
         return info;
     }
 
-    public void receiveIntent(Uri uri) throws Exception {
-        IntentInfo info = parseIntentUri(uri);
+    public void receiveIntent(Uri uri, CallbackContext callbackContext) throws Exception {
+        IntentInfo info = parseIntentUri(uri, callbackContext);
         if (info != null && info.params != null) {
             // We are receiving an intent from an external application. Do some sanity check.
             checkExternalIntentValidity(info, (isValid, errorMessage)->{
@@ -345,7 +352,7 @@ public class IntentManager {
 
     public void doIntentByUri(Uri uri) {
         try {
-            receiveIntent(uri);
+            receiveIntent(uri, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

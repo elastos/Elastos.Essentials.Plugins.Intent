@@ -1,9 +1,9 @@
 {
-  "name": "elastos-essentials-plugin-appmanager",
+  "name": "elastos-essentials-plugin-intent",
   "version": "1.0.0",
-  "description": "Elastos Essentials AppManager Plugin",
+  "description": "Elastos Essentials Intent Plugin",
   "cordova": {
-    "id": "elastos-essentials-plugin-appmanager",
+    "id": "elastos-essentials-plugin-intent",
     "platforms": [
       "android",
       "ios"
@@ -11,11 +11,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/elastos/Elastos.Essentials.Plugins.AppManager.git"
+    "url": "git+https://github.com/elastos/Elastos.Essentials.Plugins.Intent.git"
   },
   "keywords": [
     "cordova",
-    "appmanager",
+    "intent",
     "essentials",
     "elastos",
     "ecosystem:cordova",
@@ -26,11 +26,11 @@
   "author": "Dongxiao Chen",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/elastos/Elastos.Essentials.Plugins.AppManager/issues"
+    "url": "https://github.com/elastos/Elastos.Essentials.Plugins.Intent/issues"
   },
-  "homepage": "https://github.com/elastos/Elastos.Essentials.Plugins.AppManager#readme",
+  "homepage": "https://github.com/elastos/Elastos.Essentials.Plugins.Intent#readme",
   "scripts": {
-    "gen-docs": "jsdoc2md www/appmanager.js > README.md"
+    "gen-docs": "jsdoc2md www/intent.js > README.md"
   },
   "types": "./www/types.d.ts"
 }

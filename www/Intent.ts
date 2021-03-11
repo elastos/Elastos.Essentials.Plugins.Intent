@@ -22,7 +22,7 @@
 
 let exec = cordova.exec;
 
-class AppManagerImpl implements AppManagerPlugin.AppManager {
+class IntentImpl implements IntentPlugin.Intent {
     constructor() {
     }
 
@@ -37,23 +37,26 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
             (err)=>{
               reject(err);
             },
-            'AppManager', 'sendIntent', [action, JSON.stringify(params)]);
+            'Intent', 'sendIntent', [action, JSON.stringify(params)]);
           });
     }
 
-    sendUrlIntent(url: string): Promise<void> {
+    sendUrlIntent(url: string): Promise<any> {
         return new Promise((resolve, reject)=>{
-            exec(()=>{
-                resolve();
+            exec((ret)=>{
+                if (typeof (ret.result) == "string") {
+                    ret.result = JSON.parse(ret.result);
+                }
+                resolve(ret);
             },
             (err)=>{
                 reject(err);
             },
-            'AppManager', 'sendUrlIntent', [url]);
+            'Intent', 'sendUrlIntent', [url]);
         });
     }
 
-    setIntentListener(callback: (msg: AppManagerPlugin.ReceivedIntent) => void) {
+    addIntentListener(callback: (msg: IntentPlugin.ReceivedIntent) => void) {
         function _onReceiveIntent(ret) {
             if (typeof (ret.params) == "string") {
                 ret.params = JSON.parse(ret.params);
@@ -62,7 +65,7 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
                 callback(ret);
             }
         }
-        exec(_onReceiveIntent, null, 'AppManager', 'setIntentListener');
+        exec(_onReceiveIntent, null, 'Intent', 'addIntentListener');
     }
 
     sendIntentResponse(result: any, intentId: number): Promise<void> {
@@ -73,9 +76,9 @@ class AppManagerImpl implements AppManagerPlugin.AppManager {
             (err)=>{
                 reject(err);
             },
-            'AppManager', 'sendIntentResponse', [JSON.stringify(result), intentId]);
+            'Intent', 'sendIntentResponse', [JSON.stringify(result), intentId]);
         });
     }
 }
 
-export = new AppManagerImpl();
+export = new IntentImpl();

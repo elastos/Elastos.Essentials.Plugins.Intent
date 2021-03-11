@@ -26,10 +26,10 @@
 * <br><br>
 * Usage:
 * <br>
-* declare let appManager: AppManagerPlugin.AppManager;
+* declare let appManager: IntentPlugin.Intent;
 */
 
-declare namespace AppManagerPlugin {
+declare namespace IntentPlugin {
 
     const enum IntentSource {
         Internal = "INTERNAL",
@@ -55,7 +55,7 @@ declare namespace AppManagerPlugin {
     /**
      * The class representing dapp manager for launcher.
      */
-    interface AppManager {
+    interface Intent {
         /**
          * Send a intent by action.
          *
@@ -69,14 +69,14 @@ declare namespace AppManagerPlugin {
          *
          * @param url        The intent url.
          */
-        sendUrlIntent(url: string): Promise<void>;
+        sendUrlIntent(url: string): Promise<any>;
 
         /**
-         * Set intent listener for intent callback.
+         * Add intent listener for intent callback.
          *
          * @param callback   The function to receive the intent.
          */
-        setIntentListener(callback: (msg: ReceivedIntent)=>void);
+        addIntentListener(callback: (msg: ReceivedIntent)=>void);
 
         /**
          * Send a intent response by id.
