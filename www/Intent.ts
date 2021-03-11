@@ -22,7 +22,7 @@
 
 let exec = cordova.exec;
 
-class IntentImpl implements IntentPlugin.Intent {
+class IntentImpl implements EssentialsIntentPlugin.Intent {
     constructor() {
     }
 
@@ -56,7 +56,7 @@ class IntentImpl implements IntentPlugin.Intent {
         });
     }
 
-    addIntentListener(callback: (msg: IntentPlugin.ReceivedIntent) => void) {
+    addIntentListener(callback: (msg: EssentialsIntentPlugin.ReceivedIntent) => void) {
         function _onReceiveIntent(ret) {
             if (typeof (ret.params) == "string") {
                 ret.params = JSON.parse(ret.params);

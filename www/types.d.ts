@@ -26,10 +26,10 @@
 * <br><br>
 * Usage:
 * <br>
-* declare let appManager: IntentPlugin.Intent;
+* declare let essentialsIntent: EssentialsIntentPlugin.Intent;
 */
 
-declare namespace IntentPlugin {
+declare namespace EssentialsIntentPlugin {
 
     const enum IntentSource {
         Internal = "INTERNAL",
