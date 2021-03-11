@@ -90,7 +90,7 @@ public class IntentPlugin extends CordovaPlugin {
         String result = args.getString(0);
         long intentId = args.getLong(1);
 
-        IntentManager.getShareInstance().sendIntentResponse(result, intentId, false);
+        IntentManager.getShareInstance().sendIntentResponse(result, intentId);
         callbackContext.success();
     }
 

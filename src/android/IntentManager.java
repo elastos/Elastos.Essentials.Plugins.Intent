@@ -75,7 +75,7 @@ public class IntentManager {
     IntentManager() {
         String filters = MainActivity.instance.getPreferences().getString("InternalIntentFilter", "");
         internalIntentFilters = filters.split(" ");
-        intentRedirectFilter = MainActivity.instance.getPreferences().getString("IntentRedirectFilter", "https://essentials.elastos.net");
+        intentRedirectFilter = MainActivity.instance.getPreferences().getString("IntentRedirecturlFilter", "https://essentials.elastos.net");
     }
 
     public static IntentManager getShareInstance() {
@@ -638,7 +638,7 @@ public class IntentManager {
         }
     }
 
-    public void sendIntentResponse(String result, long intentId, boolean isReceiveExternal) throws Exception {
+    public void sendIntentResponse(String result, long intentId) throws Exception {
         // Retrieve intent context information for the given intent id
         IntentInfo info = intentContextList.get(intentId);
         if (info == null) {
@@ -649,7 +649,7 @@ public class IntentManager {
         // The result object can be either a standard json object, or a {jwt:JWT} object.
         IntentResult intentResult = new IntentResult(result);
 
-        if (isReceiveExternal || isInternalIntent(info.action)) {
+        if (info.callbackContext != null) {
             info.params = intentResult.payloadAsString();
             // If the called dapp has generated a JWT as output, we pass the decoded payload to the calling dapp
             // for convenience, but we also forward the raw JWT as this is required in some cases.
@@ -712,7 +712,7 @@ public class IntentManager {
         }
 
         try {
-            sendIntentResponse(resultStr, intentId, true);
+            sendIntentResponse(resultStr, intentId);
         } catch (Exception e) {
             e.printStackTrace();
         }
