@@ -45,7 +45,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.elastos.did.DID;
 import org.elastos.did.DIDDocument;
 import org.elastos.did.VerifiableCredential;
-import org.elastos.essentials.plugins.intent.IntentInfo;
+import org.elastos.essentials.plugins.did.DIDPlugin;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -173,12 +173,8 @@ public class IntentManager {
             ret.put("params", info.params);
             ret.put("intentId", info.intentId);
             ret.put("originalJwtRequest", info.originalJwtRequest);
-            if (isInternalIntent(info.action)) {
-                ret.put("from", IntentInfo.INTERNAL);
-            }
-            else {
-                ret.put("from", IntentInfo.EXTERNAL);
-            }
+            ret.put("from", info.from);
+
             PluginResult result = new PluginResult(PluginResult.Status.OK, ret);
             result.setKeepCallback(true);
             mIntentContext.sendPluginResult(result);
@@ -320,6 +316,7 @@ public class IntentManager {
 
             info = new IntentInfo(action, null, null);
             info.callbackContext = callbackContext;
+            info.from = IntentInfo.EXTERNAL;
 
             if (set.size() > 0) {
                 getParamsByUri(uri, info);
@@ -396,7 +393,7 @@ public class IntentManager {
     @SuppressLint("StaticFieldLeak")
     private void checkExternalIntentValidityForAppDID(IntentInfo info, String appDid, OnExternalIntentValidityListener callback) throws Exception {
         // DIRTY to call the DID Plugin from here, but no choice for now because of the static DID back end...
-        org.elastos.essentials.plugins.did.DIDPlugin.initializeDIDBackend(MainActivity.instance);
+        DIDPlugin.initializeDIDBackend(MainActivity.instance);
 
         new AsyncTask<Void, Void, DIDDocument>() {
             @Override
