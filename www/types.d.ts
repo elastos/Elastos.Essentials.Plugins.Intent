@@ -44,7 +44,7 @@ declare namespace EssentialsIntentPlugin {
         action: string;
         /** Custom intent parameters provided by the calling application. */
         params: any;
-        /** Application package id of the calling application. */
+        /** The intent id of the calling application. */
         intentId: number;
         /** In case the intent comes from outside elastOS and was received as a JWT, this JWT is provided here. */
         originalJwtRequest?: string;
