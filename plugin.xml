@@ -17,6 +17,9 @@
              <activity android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale|smallestScreenSize|screenLayout|uiMode" android:label="@string/activity_name" android:launchMode="singleTask" android:name="org.elastos.essentials.plugins.intent.MainActivity" android:theme="@android:style/Theme.DeviceDefault.NoActionBar" android:windowSoftInputMode="adjustResize">
             </activity>
         </edit-config>
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <uses-library android:name="org.apache.http.legacy" android:required="false" />
+        </config-file>
 
         <source-file src="src/android/IntentPlugin.java" target-dir="src/org/elastos/essentials/plugins/intent" />
         <source-file src="src/android/IntentInfo.java" target-dir="src/org/elastos/essentials/plugins/intent" />
