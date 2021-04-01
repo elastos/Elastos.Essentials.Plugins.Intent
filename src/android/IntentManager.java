@@ -75,12 +75,12 @@ public class IntentManager {
     private boolean listenerReady = false;
     protected CallbackContext mIntentContext = null;
     private String[] internalIntentFilters;
-    private String intentRedirectFilter;
+    private String intentRedirecturlFilter;
 
     IntentManager() {
         String filters = MainActivity.instance.getPreferences().getString("InternalIntentFilter", "");
         internalIntentFilters = filters.split(" ");
-        intentRedirectFilter = MainActivity.instance.getPreferences().getString("IntentRedirecturlFilter", "https://essentials.elastos.net");
+        intentRedirecturlFilter = MainActivity.instance.getPreferences().getString("IntentRedirecturlFilter", "https://essentials.elastos.net");
     }
 
     public static IntentManager getShareInstance() {
@@ -133,18 +133,14 @@ public class IntentManager {
         ab.show();
     }
 
-    private  void doIntent(Uri uri) {
-        if (!uri.toString().contains("redirecturl") && uri.toString().contains("/intentresponse"))
-            receiveExternalIntentResponse(uri);
-        else
-            doIntentByUri(uri);
-    }
-
     public void setIntentUri(Uri uri) {
         if (uri == null) return;
 
-        if (listenerReady) {
-            doIntent(uri);
+        if (!uri.toString().contains("redirecturl") && uri.toString().contains("/intentresponse")) {
+            receiveExternalIntentResponse(uri);
+        }
+        else if (listenerReady) {
+            doIntentByUri(uri);
         }
         else {
             intentUriList.add(uri);
@@ -157,7 +153,7 @@ public class IntentManager {
 
         for (int i = 0; i < intentUriList.size(); i++) {
             Uri uri = intentUriList.get(i);
-            doIntent(uri);
+            doIntentByUri(uri);
         }
         intentUriList.clear();
     }
@@ -314,8 +310,7 @@ public class IntentManager {
             }
             Set<String> set = uri.getQueryParameterNames();
 
-            info = new IntentInfo(action, null, null);
-            info.callbackContext = callbackContext;
+            info = new IntentInfo(action, null, callbackContext);
             info.from = IntentInfo.EXTERNAL;
 
             if (set.size() > 0) {
@@ -509,7 +504,7 @@ public class IntentManager {
             // "intentresponse" is added For trinity native. NOTE: we should maybe move this out of this method
             url = addParamLinkChar(url);
 
-            url += "redirecturl=" + intentRedirectFilter + "/intentresponse%3FintentId=" + info.intentId; // Ex: diddemo:///intentresponse?intentId=xxx
+            url += "redirecturl=" + intentRedirecturlFilter + "/intentresponse%3FintentId=" + info.intentId; // Ex: diddemo:///intentresponse?intentId=xxx
         }
 
         System.out.println("INTENT DEBUG: " + url);
