@@ -26,7 +26,7 @@
 * <br><br>
 * Usage:
 * <br>
-* declare let essentialsIntent: EssentialsIntentPlugin.Intent;
+* declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 */
 
 declare namespace EssentialsIntentPlugin {
@@ -53,9 +53,9 @@ declare namespace EssentialsIntentPlugin {
     }
 
     /**
-     * The class representing dapp manager for launcher.
+     * Root manager allowing to send native requests to other native apps and receive responses.
      */
-    interface Intent {
+    interface IntentManager {
         /**
          * Send a intent by action.
          *

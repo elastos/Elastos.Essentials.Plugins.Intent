@@ -22,7 +22,7 @@
 
 let exec = cordova.exec;
 
-class IntentImpl implements EssentialsIntentPlugin.Intent {
+class IntentManagerImpl implements EssentialsIntentPlugin.IntentManager {
     constructor() {
     }
 
@@ -37,7 +37,7 @@ class IntentImpl implements EssentialsIntentPlugin.Intent {
             (err)=>{
               reject(err);
             },
-            'Intent', 'sendIntent', [action, JSON.stringify(params)]);
+            'IntentManager', 'sendIntent', [action, JSON.stringify(params)]);
           });
     }
 
@@ -52,7 +52,7 @@ class IntentImpl implements EssentialsIntentPlugin.Intent {
             (err)=>{
                 reject(err);
             },
-            'Intent', 'sendUrlIntent', [url]);
+            'IntentManager', 'sendUrlIntent', [url]);
         });
     }
 
@@ -65,7 +65,7 @@ class IntentImpl implements EssentialsIntentPlugin.Intent {
                 callback(ret);
             }
         }
-        exec(_onReceiveIntent, null, 'Intent', 'addIntentListener');
+        exec(_onReceiveIntent, null, 'IntentManager', 'addIntentListener');
     }
 
     sendIntentResponse(result: any, intentId: number): Promise<void> {
@@ -76,9 +76,9 @@ class IntentImpl implements EssentialsIntentPlugin.Intent {
             (err)=>{
                 reject(err);
             },
-            'Intent', 'sendIntentResponse', [JSON.stringify(result), intentId]);
+            'IntentManager', 'sendIntentResponse', [JSON.stringify(result), intentId]);
         });
     }
 }
 
-export = new IntentImpl();
+export = new IntentManagerImpl();
