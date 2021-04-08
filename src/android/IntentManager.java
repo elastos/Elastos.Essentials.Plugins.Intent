@@ -90,6 +90,7 @@ public class IntentManager {
     }
 
     public void setActivity(Activity activity, CordovaPreferences preferences) {
+        listenerReady = false;
         this.activity = activity;
         String filters = preferences.getString("InternalIntentFilter", "");
         internalIntentFilters = filters.split(" ");
