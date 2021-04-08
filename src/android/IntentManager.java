@@ -36,8 +36,6 @@ import android.util.Log;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.PluginResult;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -65,6 +63,8 @@ import io.jsonwebtoken.Jwts;
 import org.apache.http.client.HttpClient;
 import org.json.JSONTokener;
 
+import org.apache.cordova.*;
+
 public class IntentManager {
     private static final String LOG_TAG = "IntentManager";
 
@@ -76,11 +76,10 @@ public class IntentManager {
     protected CallbackContext mIntentContext = null;
     private String[] internalIntentFilters;
     private String intentRedirecturlFilter;
+    private Activity activity;
 
     IntentManager() {
-        String filters = MainActivity.instance.getPreferences().getString("InternalIntentFilter", "");
-        internalIntentFilters = filters.split(" ");
-        intentRedirecturlFilter = MainActivity.instance.getPreferences().getString("IntentRedirecturlFilter", "https://essentials.elastos.net");
+
     }
 
     public static IntentManager getShareInstance() {
@@ -88,6 +87,13 @@ public class IntentManager {
             IntentManager.intentManager = new IntentManager();
         }
         return IntentManager.intentManager;
+    }
+
+    public void setActivity(Activity activity, CordovaPreferences preferences) {
+        this.activity = activity;
+        String filters = preferences.getString("InternalIntentFilter", "");
+        internalIntentFilters = filters.split(" ");
+        intentRedirecturlFilter = preferences.getString("IntentRedirecturlFilter", "https://essentials.elastos.net");
     }
 
     public boolean isInternalIntent(String action) {
@@ -114,11 +120,10 @@ public class IntentManager {
         intent.addCategory(Intent.CATEGORY_BROWSABLE);
         Uri uri = Uri.parse(url);
         intent.setData(uri);
-        MainActivity.instance.startActivity(intent);
+        activity.startActivity(intent);
     }
 
-    public static void alertDialog(String title, String msg) {
-        Activity activity = MainActivity.instance;
+    public void alertDialog(String title, String msg) {
         AlertDialog.Builder ab = new AlertDialog.Builder(activity);
         ab.setTitle(title);
         ab.setMessage(msg);
@@ -339,8 +344,8 @@ public class IntentManager {
                 else {
                     System.err.println(errorMessage);
 
-                    MainActivity.instance.runOnUiThread(() -> {
-                        alertDialog("Invalid intent received", "The received intent could not be handled and returned the following error: "+errorMessage);
+                    activity.runOnUiThread(() -> {
+                        this.alertDialog("Invalid intent received", "The received intent could not be handled and returned the following error: "+errorMessage);
                     });
                 }
             });
@@ -388,7 +393,7 @@ public class IntentManager {
     @SuppressLint("StaticFieldLeak")
     private void checkExternalIntentValidityForAppDID(IntentInfo info, String appDid, OnExternalIntentValidityListener callback) throws Exception {
         // DIRTY to call the DID Plugin from here, but no choice for now because of the static DID back end...
-        DIDPlugin.initializeDIDBackend(MainActivity.instance);
+        DIDPlugin.initializeDIDBackend(activity);
 
         new AsyncTask<Void, Void, DIDDocument>() {
             @Override
@@ -796,7 +801,7 @@ public class IntentManager {
             sendIntent.setType("text/plain");
 
             android.content.Intent shareIntent = android.content.Intent.createChooser(sendIntent, null);
-            MainActivity.instance.startActivity(shareIntent);
+            activity.startActivity(shareIntent);
         }
     }
 
@@ -841,7 +846,7 @@ public class IntentManager {
             sendIntent.setData(extractedParams.url);
 
             android.content.Intent shareIntent = android.content.Intent.createChooser(sendIntent, null);
-            MainActivity.instance.startActivity(shareIntent);
+            activity.startActivity(shareIntent);
         }
     }
 }

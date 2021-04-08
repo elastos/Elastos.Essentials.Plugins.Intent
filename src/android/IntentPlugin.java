@@ -22,11 +22,11 @@
 
 package org.elastos.essentials.plugins.intent;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 
-import org.apache.cordova.CallbackContext;
-import org.apache.cordova.CordovaPlugin;
-import org.apache.cordova.PluginResult;
+import org.apache.cordova.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -58,6 +58,34 @@ public class IntentPlugin extends CordovaPlugin {
             callbackContext.error(e.getLocalizedMessage());
         }
         return true;
+    }
+
+    private void getIntentUri(Intent intent) {
+        if (intent == null) {
+            return;
+        }
+
+        String action = intent.getAction();
+        if ((action != null) && action.equals("android.intent.action.VIEW")) {
+            Uri uri = intent.getData();
+            if (uri != null) {
+                IntentManager.getShareInstance().setIntentUri(uri);
+            }
+        }
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        getIntentUri(intent);
+    }
+
+    @Override
+    protected void pluginInitialize() {
+        Activity activity = cordova.getActivity();
+        IntentManager.getShareInstance().setActivity(activity, preferences);
+        getIntentUri(activity.getIntent());
+        super.pluginInitialize();
     }
 
     protected void sendIntent(JSONArray args, CallbackContext callbackContext) throws Exception {
