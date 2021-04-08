@@ -651,44 +651,42 @@ public class IntentManager {
         // The result object can be either a standard json object, or a {jwt:JWT} object.
         IntentResult intentResult = new IntentResult(result);
 
-        if (info.callbackContext != null) {
+        String url = info.redirecturl;
+        if (url == null) {
+            url = info.callbackurl;
+        }
+
+        // If there is a provided URL callback for the intent, we want to send the intent response to that url
+        if (url != null) {
+            String jwt;
+            if (intentResult.isAlreadyJWT())
+                jwt = intentResult.jwt;
+            else {
+                // App did not return a JWT, so we return an unsigned JWT instead
+                jwt = createUnsignedJWTResponse(info, result);
+            }
+
+            // Response url can't be handled by trinity. So we either call an intent to open it, or HTTP POST data
+            if (info.redirecturl != null) {
+                if (intentResult.isAlreadyJWT())
+                    url = getJWTRedirecturl(info.redirecturl, jwt);
+                else
+                    url = getResultUrl(url, intentResult.payloadAsString()); // Pass the raw data as a result= field
+                showWebPage(url);
+            } else if (info.callbackurl != null) {
+                if (intentResult.isAlreadyJWT())
+                    postCallback("jwt", jwt, info.callbackurl);
+                else
+                    postCallback("result", intentResult.payloadAsString(), info.callbackurl);
+            }
+        }
+        else if (info.callbackContext != null) {
             info.params = intentResult.payloadAsString();
             // If the called dapp has generated a JWT as output, we pass the decoded payload to the calling dapp
             // for convenience, but we also forward the raw JWT as this is required in some cases.
             if (intentResult.isAlreadyJWT())
                 info.responseJwt = intentResult.jwt;
             onReceiveIntentResponse(info);
-        }
-        else {
-            String url = info.redirecturl;
-            if (url == null) {
-                url = info.callbackurl;
-            }
-
-            // If there is a provided URL callback for the intent, we want to send the intent response to that url
-            if (url != null) {
-                String jwt;
-                if (intentResult.isAlreadyJWT())
-                    jwt = intentResult.jwt;
-                else {
-                    // App did not return a JWT, so we return an unsigned JWT instead
-                    jwt = createUnsignedJWTResponse(info, result);
-                }
-
-                // Response url can't be handled by trinity. So we either call an intent to open it, or HTTP POST data
-                if (info.redirecturl != null) {
-                    if (intentResult.isAlreadyJWT())
-                        url = getJWTRedirecturl(info.redirecturl, jwt);
-                    else
-                        url = getResultUrl(url, intentResult.payloadAsString()); // Pass the raw data as a result= field
-                    showWebPage(url);
-                } else if (info.callbackurl != null) {
-                    if (intentResult.isAlreadyJWT())
-                        postCallback("jwt", jwt, info.callbackurl);
-                    else
-                        postCallback("result", intentResult.payloadAsString(), info.callbackurl);
-                }
-            }
         }
     }
 
