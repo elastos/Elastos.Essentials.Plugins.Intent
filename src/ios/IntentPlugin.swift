@@ -103,10 +103,15 @@
 
     @objc func sendUrlIntent(_ command: CDVInvokedUrlCommand) {
         let url = command.arguments[0] as? String ?? "";
+        let uri = URL(string: url);
+        if (uri == nil) {
+            self.error(command, "Url is invalid!");
+            return;
+        }
 
         if (IntentManager.getShareInstance().isInternalIntent(url)) {
             do {
-                try IntentManager.getShareInstance().receiveIntent(URL(string: url)!, command.callbackId);
+                try IntentManager.getShareInstance().receiveIntent(uri!, command.callbackId);
                 let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
                 result?.setKeepCallbackAs(true);
                 self.commandDelegate?.send(result, callbackId: command.callbackId)
@@ -121,9 +126,8 @@
     }
 
     @objc func sendIntentResponse(_ command: CDVInvokedUrlCommand) {
-//        let action = command.arguments[0] as? String ?? "";
-        let result = command.arguments[1] as? String ?? "";
-        let intentId = command.arguments[2] as? Int64 ?? -1
+        let result = command.arguments[0] as? String ?? "";
+        let intentId = command.arguments[1] as? Int64 ?? -1
 
         do {
             try IntentManager.getShareInstance().sendIntentResponse(result, intentId);

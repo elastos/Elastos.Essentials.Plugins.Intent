@@ -110,12 +110,6 @@
     private var intentPlugin:IntentPlugin?;
 
     init() {
-        do {
-
-        }
-        catch let error {
-
-        }
         IntentManager.intentManager = self;
     }
 
@@ -136,45 +130,6 @@
             internalIntentFilters.append(String(item))
         }
         intentRedirecturlFilter = viewController.settings["intentredirecturlfilter"] as! String;
-    }
-
-    public func anyToString(_ value: Any) -> String {
-        if (value is String) {
-            return (value as! String);
-        }
-        else if (value is Bool) {
-            return (value as! Bool).toString();
-        }
-        else if (value is [Any]) {
-            return (value as! [Any]).description
-        }
-        else if (value is [String: Any]) {
-            return (value as! [String: Any]).toString()!;
-        }
-        else if (value is Int) {
-            return String(value as! Int)
-        }
-        else if (value is Double) {
-            return String(value as! Double)
-        }
-        else if (value is NSNull) {
-            return "null"
-        }
-        else {
-            return "\(value)"
-        }
-    }
-
-    public func anyToJsonFieldString(_ value: Any) -> String {
-        if (JSONSerialization.isValidJSONObject(value)) {
-            do {
-                let data = try JSONSerialization.data(withJSONObject: value, options: [])
-                return String(data:data, encoding: .utf8)!
-            } catch (let e) {
-                print(e.localizedDescription)
-            }
-        }
-        return anyToString(value)
     }
 
     func isInternalIntent(_ action: String) -> Bool {
@@ -310,7 +265,7 @@
         }
 
         jwtPayload!["type"] = "jwt";
-        info.params = jwtPayload!.toString();
+        info.params = DictionarytoString(jwtPayload!) ?? "";
 
         if (jwtPayload!["iss"] != nil) {
             info.aud = (jwtPayload!["iss"] as! String);
@@ -359,7 +314,7 @@
             }
         }
         info.type = IntentInfo.URL
-        info.params = json.toString() ?? ""
+        info.params = DictionarytoString(json) ?? ""
     }
 
     func parseIntentUri(_ _uri: URL, _ callbackId: String?) throws -> IntentInfo? {
@@ -593,7 +548,7 @@
         }
         ret!["iat"] = Int64(Date().timeIntervalSince1970)/1000;
         ret!["method"] = info.action;
-        return ret!.toString();
+        return DictionarytoString(ret!);
     }
 
     func postCallback(_ name: String, _ value: String, _ callbackurl: String) throws {
@@ -690,7 +645,7 @@
         }
 
         func payloadAsString() -> String {
-            return payload?.toString() ?? "{}"
+            return DictionarytoString(payload) ?? "{}"
         }
 
         func isAlreadyJWT() -> Bool {
