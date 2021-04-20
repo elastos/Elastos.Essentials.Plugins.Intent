@@ -26,14 +26,28 @@
  import PopupDialog
  import ElastosDIDSDK
 
- extension AnyCodable : SwiftJWT.Claims {}
+//TODO:: Redundant conformance with DID plugin need to fix.
+//  extension AnyCodable : SwiftJWT.Claims {}
 
  @objc(AppDelegate)
  extension AppDelegate {
     open override func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-            IntentManager.getShareInstance().setIntentUri(url);
-            return true;
+        IntentManager.getShareInstance().setIntentUri(url);
+        return true;
+    }
+
+    open override func application(_ application: UIApplication,
+                continue userActivity: NSUserActivity,
+                restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // Get URL from the incoming user activity.
+        guard userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+            let incomingURL = userActivity.webpageURL else {
+            return false
         }
+
+        IntentManager.getShareInstance().setIntentUri(incomingURL);
+        return true;
+    }
  }
 
  class Intent {
