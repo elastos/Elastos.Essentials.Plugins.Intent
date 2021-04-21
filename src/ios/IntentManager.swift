@@ -121,7 +121,7 @@
     private var internalIntentFilters: [String] = [String]();
     private var intentRedirecturlFilter: String = "";
 
-    private var intentPlugin:IntentPlugin?;
+    private var viewController: CDVViewController?;
 
     init() {
         IntentManager.intentManager = self;
@@ -135,9 +135,9 @@
         return IntentManager.intentManager!;
     }
 
-    func setIntentPlugin(_ intentPlugin:IntentPlugin) {
-        self.intentPlugin = intentPlugin;
-        let viewController: CDVViewController = intentPlugin.viewController as! CDVViewController;
+    func setViewController(_ viewController: CDVViewController) {
+        listenerReady = false;
+        self.viewController = viewController;
         let fiters = viewController.settings["internalintentfilter"] as? String;
         let items = fiters!.split(separator: " ");
         for item in items {
@@ -178,25 +178,34 @@
          }
      }
 
+    func alertDialog(_ title: String, _ msg: String) {
+        func doOKHandler(alerAction:UIAlertAction) {
+
+        }
+
+        let alertController = UIAlertController(title: title,
+                                               message: msg,
+                                               preferredStyle: UIAlertController.Style.alert)
+        let sureAlertAction = UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: doOKHandler)
+        alertController.addAction(sureAlertAction)
+
+        DispatchQueue.main.async {
+            self.viewController!.present(alertController, animated: true, completion: nil)
+        }
+    }
+
     private func initializeDIDBackend() throws {
         let cacheDir = NSHomeDirectory() + "/Documents/data/did/.cache.did.elastos";
         let resolverUrl = "https://api.elastos.io/did";
         try DIDBackend.initializeInstance(resolverUrl, cacheDir)
     }
 
-    private func doIntent(_ uri: URL) {
+    func setIntentUri(_ uri: URL) {
         if !uri.absoluteString.contains("redirecturl") && uri.absoluteString.contains("/intentresponse") {
             receiveExternalIntentResponse(uri: uri)
         }
-        else {
+        else if (listenerReady) {
             doIntentByUri(uri)
-        }
-
-    }
-
-    func setIntentUri(_ uri: URL) {
-        if (listenerReady) {
-            doIntent(uri);
         }
         else {
             intentUriList.append(uri);
@@ -385,8 +394,8 @@
                     }
                 }
                 else {
-                    // TODO: clear popup error message to user.
                     print(errorMessage)
+                    self.alertDialog("Invalid intent received", "The received intent could not be handled and returned the following error: " + errorMessage!);
                 }
             }
         }
@@ -677,7 +686,43 @@
         // The result object can be either a standard json object, or a {jwt:JWT} object.
         let intentResult = try IntentResult(rawResult: result)
 
-        if (info!.callbackId != nil) {
+        var urlString = info!.redirecturl
+        if (urlString == nil) {
+            urlString = info!.callbackurl
+        }
+
+        // If there is a provided URL callback for the intent, we want to send the intent response to that url
+        if (urlString != nil) {
+            var jwt: String? = nil
+            if intentResult.isAlreadyJWT() {
+                jwt = intentResult.jwt
+            }
+            else {
+                // App did not return a JWT, so we return an unsigned JWT instead
+                jwt = try createUnsignedJWTResponse(info!, result)
+            }
+
+
+            // Response url can't be handled by trinity. So we either call an intent to open it, or HTTP POST data
+            if (info!.redirecturl != nil) {
+                if intentResult.isAlreadyJWT() {
+                    urlString = getJWTRedirecturl(info!.redirecturl!, jwt!)
+                }
+                else {
+                    urlString = getResultUrl(urlString!, intentResult.payloadAsString()) // Pass the raw data as a result= field
+                }
+                openUrl(urlString!)
+            }
+            else if (info!.callbackurl != nil) {
+                if (intentResult.isAlreadyJWT()) {
+                    try postCallback("jwt", jwt!, info!.callbackurl!)
+                }
+                else {
+                    try postCallback("result", intentResult.payloadAsString(), info!.callbackurl!)
+                }
+            }
+        }
+        else if (info!.callbackId != nil) {
             info!.params = intentResult.payloadAsString()
             // If the called dapp has generated a JWT as output, we pass the decoded payload to the calling dapp
             // for convenience, but we also forward the raw JWT as this is required in some cases.
@@ -685,44 +730,6 @@
                 info!.responseJwt = intentResult.jwt
             }
             onReceiveIntentResponse(info!)
-        }
-        else {
-            var urlString = info!.redirecturl
-            if (urlString == nil) {
-                urlString = info!.callbackurl
-            }
-
-            // If there is a provided URL callback for the intent, we want to send the intent response to that url
-            if (urlString != nil) {
-                var jwt: String? = nil
-                if intentResult.isAlreadyJWT() {
-                    jwt = intentResult.jwt
-                }
-                else {
-                    // App did not return a JWT, so we return an unsigned JWT instead
-                    jwt = try createUnsignedJWTResponse(info!, result)
-                }
-
-
-                // Response url can't be handled by trinity. So we either call an intent to open it, or HTTP POST data
-                if (info!.redirecturl != nil) {
-                    if intentResult.isAlreadyJWT() {
-                        urlString = getJWTRedirecturl(info!.redirecturl!, jwt!)
-                    }
-                    else {
-                        urlString = getResultUrl(urlString!, intentResult.payloadAsString()) // Pass the raw data as a result= field
-                    }
-                    openUrl(urlString!)
-                }
-                else if (info!.callbackurl != nil) {
-                    if (intentResult.isAlreadyJWT()) {
-                        try postCallback("jwt", jwt!, info!.callbackurl!)
-                    }
-                    else {
-                        try postCallback("result", intentResult.payloadAsString(), info!.callbackurl!)
-                    }
-                }
-            }
         }
     }
 
@@ -753,7 +760,7 @@
     }
 
     func sendNativeShareAction(_ info: IntentInfo) {
-        if (self.intentPlugin == nil) {
+        if (self.viewController == nil) {
             return;
         }
 
@@ -768,7 +775,7 @@
             }
 
             let vc = UIActivityViewController(activityItems: activityItems, applicationActivities: [])
-            self.intentPlugin!.viewController.present(vc, animated: true, completion: nil)
+            self.viewController!.present(vc, animated: true, completion: nil)
         }
     }
 

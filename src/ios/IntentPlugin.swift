@@ -33,7 +33,7 @@
     var isChangeIconPath = false;
 
     override func pluginInitialize() {
-        IntentManager.getShareInstance().setIntentPlugin(self);
+        IntentManager.getShareInstance().setViewController(viewController as! CDVViewController);
     }
 
     //---------------------------------------------------------
@@ -120,7 +120,7 @@
             }
         }
         else {
-            openUrl(url);
+            IntentManager.getShareInstance().openUrl(url);
             self.success(command);
         }
     }

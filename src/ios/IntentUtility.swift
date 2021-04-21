@@ -23,19 +23,6 @@
  import Foundation
  import WebKit
 
- public func openUrl(_ urlString: String) {
-     let url = URL(string: urlString)!
-     if #available(iOS 10, *) {
-         UIApplication.shared.open(url, options: [:],
-                                     completionHandler: {
-                                     (success) in
-         })
-     }
-     else {
-         UIApplication.shared.openURL(url);
-     }
- }
-
  public func DictionarytoString(_ dict: [String: Any]?) -> String? {
      if (dict != nil) {
          let data = try? JSONSerialization.data(withJSONObject: dict, options: [])
@@ -185,4 +172,3 @@
         }
     }
  }
-

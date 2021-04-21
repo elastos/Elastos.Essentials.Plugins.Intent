@@ -41,9 +41,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.elastos.did.DID;
+import org.elastos.did.DIDBackend;
 import org.elastos.did.DIDDocument;
 import org.elastos.did.VerifiableCredential;
-import org.elastos.essentials.plugins.did.DIDPlugin;
+import org.elastos.did.exception.DIDResolveException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -125,18 +126,25 @@ public class IntentManager {
     }
 
     public void alertDialog(String title, String msg) {
-        AlertDialog.Builder ab = new AlertDialog.Builder(activity);
-        ab.setTitle(title);
-        ab.setMessage(msg);
-        ab.setIcon(android.R.drawable.ic_dialog_alert);
+        activity.runOnUiThread(() -> {
+            AlertDialog.Builder ab = new AlertDialog.Builder(activity);
+            ab.setTitle(title);
+            ab.setMessage(msg);
+            ab.setIcon(android.R.drawable.ic_dialog_alert);
 
-        ab.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+            ab.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-            }
+                }
+            });
+            ab.show();
         });
-        ab.show();
+    }
+
+    private void initializeDIDBackend() throws DIDResolveException {
+        String cacheDir = activity.getFilesDir() + "/data/did/.cache.did.elastos";;
+        DIDBackend.initialize("https://api.elastos.io/did", cacheDir);
     }
 
     public void setIntentUri(Uri uri) {
@@ -344,10 +352,7 @@ public class IntentManager {
                 }
                 else {
                     System.err.println(errorMessage);
-
-                    activity.runOnUiThread(() -> {
-                        this.alertDialog("Invalid intent received", "The received intent could not be handled and returned the following error: "+errorMessage);
-                    });
+                    this.alertDialog("Invalid intent received", "The received intent could not be handled and returned the following error: "+errorMessage);
                 }
             });
         }
@@ -393,8 +398,7 @@ public class IntentManager {
 
     @SuppressLint("StaticFieldLeak")
     private void checkExternalIntentValidityForAppDID(IntentInfo info, String appDid, OnExternalIntentValidityListener callback) throws Exception {
-        // DIRTY to call the DID Plugin from here, but no choice for now because of the static DID back end...
-        DIDPlugin.initializeDIDBackend(activity);
+        initializeDIDBackend();
 
         new AsyncTask<Void, Void, DIDDocument>() {
             @Override
