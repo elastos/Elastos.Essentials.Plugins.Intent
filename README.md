@@ -45,44 +45,72 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 ```
 
 ```xml
-    <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:host="essentials.elastos.net" android:pathPattern="/.*" android:scheme="https" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:host="did.elastos.net" android:pathPattern="/.*" android:scheme="https" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:host="wallet.elastos.net" android:pathPattern="/.*" android:scheme="https" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:host="hive.elastos.net" android:pathPattern="/.*" android:scheme="https" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:host="contact.elastos.net" android:pathPattern="/.*" android:scheme="https" />
-        </intent-filter>
-        <intent-filter>
-            <action android:name="android.intent.action.VIEW" />
-            <category android:name="android.intent.category.DEFAULT" />
-            <category android:name="android.intent.category.BROWSABLE" />
-            <data android:host="scanner.elastos.net" android:pathPattern="/.*" android:scheme="https" />
-        </intent-filter>
-    </config-file>
+    <platform name="android">
+        <config-file parent="/manifest/application/activity" target="AndroidManifest.xml">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="essentials.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="did.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="wallet.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="hive.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="contact.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:host="scanner.elastos.net" android:pathPattern="/.*" android:scheme="https" />
+            </intent-filter>
+        </config-file>
+    </platform>
+    <platform name="ios">
+        <preference name="SwiftVersion" value="5.2" />
+        <preference name="UseSwiftLanguageVersion" value="5.2" />
+        <config-file parent="com.apple.developer.associated-domains" target="*-Debug.plist">
+            <array>
+                <string>applinks:essentials.elastos.net</string>
+                <string>applinks:launcher.elastos.net</string>
+                <string>applinks:did.elastos.net</string>
+                <string>applinks:wallet.elastos.net</string>
+                <string>applinks:hive.elastos.net</string>
+                <string>applinks:contact.elastos.net</string>
+                <string>applinks:scanner.elastos.net</string>
+            </array>
+        </config-file>
+        <config-file parent="com.apple.developer.associated-domains" target="*-Release.plist">
+            <array>
+                <string>applinks:essentials.elastos.net</string>
+                <string>applinks:launcher.elastos.net</string>
+                <string>applinks:did.elastos.net</string>
+                <string>applinks:wallet.elastos.net</string>
+                <string>applinks:hive.elastos.net</string>
+                <string>applinks:contact.elastos.net</string>
+                <string>applinks:scanner.elastos.net</string>
+            </array>
+        </config-file>
+    </platform>
 ```
 
 - In android platform
