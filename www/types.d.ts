@@ -46,7 +46,7 @@ declare namespace EssentialsIntentPlugin {
         params: any;
         /** The intent id of the calling application. */
         intentId: number;
-        /** In case the intent comes from outside elastOS and was received as a JWT, this JWT is provided here. */
+        /** In case the intent comes from outside Essentials and was received as a JWT, this JWT is provided here. */
         originalJwtRequest?: string;
         /** From 'internal' or 'external'. */
         from: IntentSource;
