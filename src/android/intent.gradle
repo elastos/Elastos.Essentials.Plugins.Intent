@@ -38,4 +38,5 @@ dependencies {
         exclude group: 'org.json', module: 'json' //provided by Android natively
     }
     implementation 'com.android.support:appcompat-v7:23.1.1'
+    implementation 'org.elastos.did:didsdk:1.3'
 }
