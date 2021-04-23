@@ -120,6 +120,7 @@
     private var commandDelegate:CDVCommandDelegate?;
     private var internalIntentFilters: [String] = [String]();
     private var intentRedirecturlFilter: String = "";
+    private var rawUrlIntentFilters: [String] = [String]();
 
     private var viewController: CDVViewController?;
 
@@ -138,17 +139,37 @@
     func setViewController(_ viewController: CDVViewController) {
         listenerReady = false;
         self.viewController = viewController;
-        let fiters = viewController.settings["internalintentfilter"] as? String;
-        let items = fiters!.split(separator: " ");
-        for item in items {
-            internalIntentFilters.append(String(item))
+        var filters = viewController.settings["internalintentfilters"] as? String;
+        if (filters != nil) {
+            let items = filters!.split(separator: " ");
+            for item in items {
+                internalIntentFilters.append(String(item))
+            }
         }
+        filters = viewController.settings["rawurlintentfilters"] as? String;
+        if (filters != nil) {
+            let items = filters!.split(separator: " ");
+            for item in items {
+                rawUrlIntentFilters.append(String(item))
+            }
+        }
+
         intentRedirecturlFilter = viewController.settings["intentredirecturlfilter"] as! String;
     }
 
     func isInternalIntent(_ action: String) -> Bool {
-        for internalIntentFilter in internalIntentFilters {
-            if (action.hasPrefix(internalIntentFilter)) {
+        for filter in internalIntentFilters {
+            if (action.hasPrefix(filter)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    func isRawUrl(_ url: String) -> Bool {
+        for filter in rawUrlIntentFilters {
+            if (url.hasPrefix(filter)) {
                 return true;
             }
         }
@@ -345,7 +366,13 @@
         var uri = _uri;
         var url = uri.absoluteString;
 
-        if (!url.contains("://")) {
+        if (isRawUrl(url)) {
+            info = IntentInfo("rawurl", url, callbackId);
+            info!.from = IntentInfo.EXTERNAL;
+            try self.onReceiveIntent(info!)
+            return nil;
+        }
+        else if (!url.contains("://")) {
             throw "The url: '\(url)' is error!";
         }
 
@@ -368,7 +395,9 @@
             let params = uri.parametersFromQueryString;
 
             info = IntentInfo(action!, nil, callbackId)
-            info!.from = IntentInfo.EXTERNAL;
+            if (!isInternalIntent(info!.action)) {
+                info!.from = IntentInfo.EXTERNAL;
+            }
 
             if (params != nil && params!.count > 0) {
                 getParamsByUri(params!, info!);
@@ -377,6 +406,7 @@
                 try getParamsByJWT(pathComponents[1], info!);
             }
         }
+
         return info;
     }
 
@@ -519,13 +549,6 @@
             }
         }
 
-        // Append the current application DID to the intent to let the receiver guess who is requesting
-        // (but that will be checked on ID chain with the redirect url).
-        // For example, in order to send a "app id credential" that gives rights to the calling app to access a hive vault,
-        // We must make sure that the calling trinity native app is who it pretends to be, to not let it access the hive storage space
-        // of another app. For this, we don't blindly trust the sent appDid here, but the receiving trinity runtime will
-        // fetch this app did from chain, and will make sure that the redirect url registered in the app did public document
-        // matches with the redirect url used in this intent.
 //        params["appdid"] = appManager.getAppInfo(info.fromId)!.did
 
         var url = info.action;
@@ -537,7 +560,6 @@
 
         // If there is no redirect url, we add one to be able to receive responses
         if !params.keys.contains("redirecturl") {
-            // "intentresponse" is added For trinity native. NOTE: we should maybe move this out of this method
             url = addParamLinkChar(url);
             url = url + "redirecturl=" + intentRedirecturlFilter + "/intentresponse%3FintentId=\(info.intentId)"; // Ex: https://diddemo.elastos.org/intentresponse?intentId=xxx
         }

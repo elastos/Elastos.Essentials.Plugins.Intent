@@ -77,6 +77,7 @@ public class IntentManager {
     protected CallbackContext mIntentContext = null;
     private String[] internalIntentFilters;
     private String intentRedirecturlFilter;
+    private String[] rawUrlIntentFilters;
     private Activity activity;
 
     IntentManager() {
@@ -93,14 +94,26 @@ public class IntentManager {
     public void setActivity(Activity activity, CordovaPreferences preferences) {
         listenerReady = false;
         this.activity = activity;
-        String filters = preferences.getString("InternalIntentFilter", "");
+        String filters = preferences.getString("InternalIntentFilters", "");
         internalIntentFilters = filters.split(" ");
+        filters = preferences.getString("RawUrlIntentFilters", "");
+        rawUrlIntentFilters = filters.split(" ");
         intentRedirecturlFilter = preferences.getString("IntentRedirecturlFilter", "https://essentials.elastos.net");
     }
 
     public boolean isInternalIntent(String action) {
         for (int i = 0; i < internalIntentFilters.length; i++) {
             if (action.startsWith(internalIntentFilters[i])) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean isRawUrl(String url) {
+        for (int i = 0; i < rawUrlIntentFilters.length; i++) {
+            if (url.startsWith(rawUrlIntentFilters[i])) {
                 return true;
             }
         }
@@ -302,7 +315,13 @@ public class IntentManager {
         IntentInfo info = null;
         String url = uri.toString();
 
-        if (!url.contains("://")) {
+        if (isRawUrl(url)) {
+            info = new IntentInfo("rawurl", url, callbackContext);
+            info.from = IntentInfo.EXTERNAL;
+            onReceiveIntent(info);
+            return null;
+        }
+        else if (!url.contains("://")) {
             throw new Exception("The url: '" + url + "' is error!");
         }
 
@@ -325,7 +344,9 @@ public class IntentManager {
             Set<String> set = uri.getQueryParameterNames();
 
             info = new IntentInfo(action, null, callbackContext);
-            info.from = IntentInfo.EXTERNAL;
+            if (!isInternalIntent(info.action)) {
+                info.from = IntentInfo.EXTERNAL;
+            }
 
             if (set.size() > 0) {
                 getParamsByUri(uri, info);
@@ -334,6 +355,7 @@ public class IntentManager {
                 getParamsByJWT(paths[1], info);
             }
         }
+
         return info;
     }
 
@@ -513,7 +535,6 @@ public class IntentManager {
         if (!params.has("redirecturl")) {
             // "intentresponse" is added For trinity native. NOTE: we should maybe move this out of this method
             url = addParamLinkChar(url);
-
             url += "redirecturl=" + intentRedirecturlFilter + "/intentresponse%3FintentId=" + info.intentId; // Ex: diddemo:///intentresponse?intentId=xxx
         }
 
