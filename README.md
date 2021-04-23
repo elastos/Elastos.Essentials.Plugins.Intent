@@ -38,10 +38,11 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 ```
 
 ### config.xml
-- Add InternalIntentFilters and IntentRedirecturlFilter.
+- Add InternalIntentFilters, RawUrlIntentFilters and IntentRedirecturlFilter.
 ```xml
     <preference name="InternalIntentFilters" value="https://did.elastos.net https://wallet.elastos.net https://hive.elastos.net https://contact.elastos.net https://scanner.elastos.net" />
     <preference name="IntentRedirecturlFilter" value="https://essentials.elastos.net" />
+    <preference name="RawUrlIntentFilters" value="wc: https://wallet.elastos.net/wc:" />
 ```
 
 ```xml
