@@ -367,7 +367,7 @@
         var url = uri.absoluteString;
 
         if (isRawUrl(url)) {
-            info = IntentInfo("rawurl", url, callbackId);
+            info = IntentInfo("rawurl", "{\"url\":\"" + url + "\"}", callbackId);
             info!.from = IntentInfo.EXTERNAL;
             try self.onReceiveIntent(info!)
             return nil;

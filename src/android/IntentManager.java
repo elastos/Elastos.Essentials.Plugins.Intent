@@ -316,7 +316,7 @@ public class IntentManager {
         String url = uri.toString();
 
         if (isRawUrl(url)) {
-            info = new IntentInfo("rawurl", url, callbackContext);
+            info = new IntentInfo("rawurl", "{\"url\":\"" + url + "\"}", callbackContext);
             info.from = IntentInfo.EXTERNAL;
             onReceiveIntent(info);
             return null;
