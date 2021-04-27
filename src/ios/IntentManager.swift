@@ -136,9 +136,10 @@
         return IntentManager.intentManager!;
     }
 
-    func setViewController(_ viewController: CDVViewController) {
+    func setViewController(_ viewController: CDVViewController, _ commandDelegate: CDVCommandDelegate) {
         listenerReady = false;
         self.viewController = viewController;
+        self.commandDelegate = commandDelegate;
         var filters = viewController.settings["internalintentfilters"] as? String;
         if (filters != nil) {
             let items = filters!.split(separator: " ");
@@ -233,9 +234,8 @@
         }
     }
 
-    func setListenerReady(_ callbackId: String, _ commandDelegate:CDVCommandDelegate) {
+    func setListenerReady(_ callbackId: String) {
         self.callbackId = callbackId;
-        self.commandDelegate = commandDelegate;
         listenerReady = true;
 
         for uri in intentUriList {
