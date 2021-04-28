@@ -458,7 +458,7 @@ public class IntentManager {
                                             callback.onExternalIntentValid(true, null);
                                         }
                                         else {
-                                            callback.onExternalIntentValid(false, "The registered redirect url in the App DID document ("+onChainRedirectUrl+") doesn't match with the received intent redirect url");
+                                            callback.onExternalIntentValid(false, "The registered redirect url in the App DID document ("+onChainRedirectUrl+") doesn't match with the received intent redirect url ("+info.redirecturl+")");
                                         }
                                     }
                                 }
@@ -469,7 +469,7 @@ public class IntentManager {
                                         callback.onExternalIntentValid(true, null);
                                     }
                                     else {
-                                        callback.onExternalIntentValid(false, "The registered custom scheme in the App DID document ("+onChainCustomScheme+") doesn't match with the received intent redirect url");
+                                        callback.onExternalIntentValid(false, "The registered custom scheme in the App DID document ("+onChainCustomScheme+") doesn't match with the received intent redirect url ("+info.redirecturl+")");
                                     }
                                 }
                             }

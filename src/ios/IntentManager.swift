@@ -483,7 +483,7 @@
                                     onExternalIntentValid(true, nil)
                                 }
                                 else {
-                                    onExternalIntentValid(false, "The registered redirect url in the App DID document ("+onChainRedirectUrl+") doesn't match with the received intent redirect url")
+                                    onExternalIntentValid(false, "The registered redirect url in the App DID document ("+onChainRedirectUrl+") doesn't match with the received intent redirect url ("+info.redirecturl!+")")
                                 }
                             }
                             else {
@@ -499,7 +499,7 @@
                                     onExternalIntentValid(true, nil)
                                 }
                                 else {
-                                    onExternalIntentValid(false, "The registered callback url in the App DID document ("+onChainCallbackUrl+") doesn't match with the received intent callback url")
+                                    onExternalIntentValid(false, "The registered callback url in the App DID document ("+onChainCallbackUrl+") doesn't match with the received intent callback url ("+info.callbackurl!+")")
                                 }
                             }
                             else {
