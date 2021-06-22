@@ -43,6 +43,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.elastos.did.DID;
 import org.elastos.did.DIDBackend;
 import org.elastos.did.DIDDocument;
+import org.elastos.did.DefaultDIDAdapter;
 import org.elastos.did.VerifiableCredential;
 import org.elastos.did.exception.DIDResolveException;
 import org.json.JSONException;
@@ -157,7 +158,7 @@ public class IntentManager {
 
     private void initializeDIDBackend() throws DIDResolveException {
         String cacheDir = activity.getFilesDir() + "/data/did/.cache.did.elastos";;
-        DIDBackend.initialize("https://api.elastos.io/did", cacheDir);
+        DIDBackend.initialize(new DefaultDIDAdapter("https://api.elastos.io/eid"));
     }
 
     public void setIntentUri(Uri uri) {
@@ -442,12 +443,10 @@ public class IntentManager {
                             if (info.redirecturl != null && !info.redirecturl.equals("")) {
                                 // ANDROID ONLY - First use the custom scheme if any, otherwise fallback to the redirect url
                                 // IOS should use the redirect url.
-                                // The check below is a bit dirty, because of a crash in DID SDK in case the key does not exist in the credential subject.
-                                JsonNode customSchemeProperty = nativeCredential.getSubject().getProperties().get("customScheme");
-                                String onChainCustomScheme = customSchemeProperty != null ? nativeCredential.getSubject().getPropertyAsString("customScheme") : null;
+                                String onChainCustomScheme = (String)nativeCredential.getSubject().getProperty("customScheme");
                                 if (onChainCustomScheme == null) {
                                     // No custom scheme: try the redirect url
-                                    String onChainRedirectUrl = nativeCredential.getSubject().getPropertyAsString("redirectUrl");
+                                    String onChainRedirectUrl = (String)nativeCredential.getSubject().getProperty("redirectUrl");
                                     if (onChainRedirectUrl == null) {
                                         callback.onExternalIntentValid(false, "No redirectUrl found in the app DID document. Was the 'redirect url' configured and published on chain, using the developer tool dApp?");
                                     }
@@ -475,7 +474,7 @@ public class IntentManager {
                             }
                             // Check callback url, if any
                             else if (info.callbackurl != null && !info.callbackurl.equals("")) {
-                                String onChainCallbackUrl = nativeCredential.getSubject().getPropertyAsString("callbackurl");
+                                String onChainCallbackUrl = (String)nativeCredential.getSubject().getProperty("callbackurl");
                                 if (onChainCallbackUrl == null) {
                                     callback.onExternalIntentValid(false, "No callbackurl found in the app DID document. Was the 'callback url' configured and published on chain, using the developer tool dApp?");
                                 }
