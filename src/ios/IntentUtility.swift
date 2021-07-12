@@ -145,22 +145,6 @@
         }
         return ""
     }
-
-    /** i18n - strings localization */
-    var localized: String {
-        if let _ = UserDefaults.standard.string(forKey: "i18n_language") {} else {
-            // we set a default, just in case
-            UserDefaults.standard.set("en", forKey: "i18n_language")
-            UserDefaults.standard.synchronize()
-        }
-
-        let lang = UserDefaults.standard.string(forKey: "i18n_language") ?? "en"
-
-        let path = Bundle.main.path(forResource: "Strings/" + lang, ofType: "lproj")
-        let bundle = Bundle(path: path!)
-
-        return NSLocalizedString(self, tableName: nil, bundle: bundle!, value: "", comment: "")
-    }
  }
 
  extension URL {
