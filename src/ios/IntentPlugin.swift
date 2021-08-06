@@ -109,19 +109,20 @@
             return;
         }
 
-        if (IntentManager.getShareInstance().isInternalIntent(url)) {
-            do {
+        do {
+            if (IntentManager.getShareInstance().isInternalIntent(url)) {
                 try IntentManager.getShareInstance().receiveIntent(uri!, command.callbackId);
                 let result = CDVPluginResult(status: CDVCommandStatus_NO_RESULT);
                 result?.setKeepCallbackAs(true);
                 self.commandDelegate?.send(result, callbackId: command.callbackId)
-            } catch let error {
-                self.error(command, error.localizedDescription);
+            }
+            else {
+                try IntentManager.getShareInstance().openUrl(url);
+                self.success(command);
             }
         }
-        else {
-            IntentManager.getShareInstance().openUrl(url);
-            self.success(command);
+        catch let error {
+            self.error(command, error.localizedDescription);
         }
     }
 

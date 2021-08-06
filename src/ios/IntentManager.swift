@@ -187,17 +187,21 @@
         return false
      }
 
-    public func openUrl(_ urlString: String) {
-         let url = URL(string: urlString)!
-         if #available(iOS 10, *) {
-             UIApplication.shared.open(url, options: [:],
-                                         completionHandler: {
-                                         (success) in
-             })
-         }
-         else {
-             UIApplication.shared.openURL(url);
-         }
+    public func openUrl(_ urlString: String) throws {
+        let url = URL(string: urlString)!
+        if #available(iOS 10, *) {
+            if (!UIApplication.shared.canOpenURL(url)) {
+                throw "Can't open this url";
+            }
+
+            UIApplication.shared.open(url, options: [:],
+                                        completionHandler: {
+                                        (success) in
+            })
+        }
+        else {
+            UIApplication.shared.openURL(url);
+        }
      }
 
     func alertDialog(_ title: String, _ msg: String) {
@@ -731,7 +735,7 @@
                 else {
                     urlString = getResultUrl(urlString!, intentResult.payloadAsString()) // Pass the raw data as a result= field
                 }
-                openUrl(urlString!)
+                try openUrl(urlString!)
             }
             else if (info!.callbackurl != nil) {
                 if (intentResult.isAlreadyJWT()) {
@@ -881,6 +885,6 @@
         addToIntentContextList(info)
         let url = try createUriParamsFromIntentInfoParams(info) // info.action must be a full action url such as https://did.elastos.net/credaccess
 
-        openUrl(url);
+        try openUrl(url);
     }
  }
