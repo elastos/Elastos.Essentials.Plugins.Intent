@@ -13,9 +13,6 @@
                 <param name="onload" value="true" />
             </feature>
         </config-file>
-        <config-file parent="/manifest/application" target="AndroidManifest.xml">
-            <uses-library android:name="org.apache.http.legacy" android:required="false" />
-        </config-file>
 
         <source-file src="src/android/IntentPlugin.java" target-dir="src/org/elastos/essentials/plugins/intent" />
         <source-file src="src/android/IntentInfo.java" target-dir="src/org/elastos/essentials/plugins/intent" />
