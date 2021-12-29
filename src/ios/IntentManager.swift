@@ -716,7 +716,7 @@
         }
 
         // If there is a provided URL callback for the intent, we want to send the intent response to that url
-        if (urlString != nil) {
+        if (urlString != nil && urlString != "") {
             var jwt: String? = nil
             if intentResult.isAlreadyJWT() {
                 jwt = intentResult.jwt
@@ -746,7 +746,7 @@
                 }
             }
         }
-        else if (info!.callbackId != nil) {
+        else if (info!.callbackId != nil && info!.callbackurl != "") {
             info!.params = intentResult.payloadAsString()
             // If the called dapp has generated a JWT as output, we pass the decoded payload to the calling dapp
             // for convenience, but we also forward the raw JWT as this is required in some cases.
