@@ -1,6 +1,6 @@
 ---
 title: IntentManager
-description:This is an internal plugin for Elastos Essentials in order to manage internal and external inter-app communications through "intents".
+description: This is an internal plugin for Elastos Essentials in order to manage internal and external inter-app communications through "intents".
 ---
 
 # elastos-essentials-plugin-intent
@@ -29,7 +29,7 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
     cordova plugin add elastos-essentials-plugin-intent
 ```
 
-## Cofigure
+## Configure
 ### tsconfig.app.json
 ```json
     "types": [
@@ -159,7 +159,7 @@ declare let essentialsIntentManager: EssentialsIntentPlugin.IntentManager;
 <a name="IntentManager+sendIntent"></a>
 
 ### appManager.sendIntent(action, params, onSuccess, [onError])
-Send a intent by action.
+Send an intent by action.
 
 **Kind**: instance method of [<code>IntentManager</code>](#IntentManager)
 
@@ -182,7 +182,7 @@ Set intent listener for message callback.
 <a name="IntentManager+sendIntentResponse"></a>
 
 ### appManager.sendIntentResponse(action, result, intentId, onSuccess, [onError])
-Send a intent respone by id.
+Send an intent respone by id.
 
 **Kind**: instance method of [<code>IntentManager</code>](#IntentManager)
 
